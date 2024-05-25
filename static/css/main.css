@@ -1,0 +1,38 @@
+table{
+    border-collapse: collapse;
+}
+
+th, td{
+    border: solid 2px;
+
+    text-align: center;
+}
+
+.error_message{
+    color: red;
+}
+
+.important_tag{
+    color: red;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid red;
+}
+.uni_tag{
+    color: green;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid green;
+}
+.private_tag{
+    color: blue;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid blue;
+}
+.task_tag{
+    color: rgb(255, 200, 0);
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid rgb(255, 200, 0);
+}

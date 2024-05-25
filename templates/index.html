@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>利用事項</h1>
+    <div>
+        <a href="/login" role="button">ログイン</a>
+    </div>
+    <div>
+        <a href="/signup" role="button">新規登録</a>
+    </div><br>
+    
+    <div>
+        <table border="1">
+            <tr>
+                <th>ユーザ名</th>
+                <th>登録日時</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>{{ user.signup_time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+{% endblock %}

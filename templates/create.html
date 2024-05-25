@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Todo作成</h1>
+    <p class="error_message">{{ error }}</p>
+    <form method="POST">
+        <div>
+            <div>
+                <label for="">やること</label>
+                <input type="text" name="do">
+            </div>
+            <div>
+                <label for="">メモ</label>
+                <input type="text" name="memo">
+            </div>
+            <div>
+                <label for="">日付</label>
+                <input type="date" name="day">
+            </div>
+        </div>
+        <div>
+            <label for="important">重要:</label>
+            <input type="checkbox" name="important" id="important">
+        
+            <label for="uni">大学:</label>
+            <input type="checkbox" name="uni" id="uni">
+        
+            <label for="private">プライベート:</label>
+            <input type="checkbox" name="private" id="private">
+        
+            <label for="task">タスク:</label>
+            <input type="checkbox" name="task" id="task">
+        </div>
+        </div>
+        <div>
+            <input type="submit" value="作成">
+        </div>
+    </form>
+    <div>
+        <a href="/home" role="button">戻る</a>
+        <a href="/logout" role="button">トップページへ</a>
+    </div>
+{% endblock %}

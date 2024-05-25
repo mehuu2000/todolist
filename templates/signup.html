@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>新規登録画面</h1>
+    <p class="error_message">{{ error }}</p>
+    <form method="POST">
+        <div>
+            <label for="">ユーザ名</label>
+            <input type="text" name="username">
+        </div>
+        <div>
+            <label for="">パスワード</label>
+            <input type="password" name="password">
+        </div>
+        <div>
+            <input type="submit" value="ログイン">
+        </div>
+    </form>
+    <div>
+        <a href="/" role="button">戻る</a>
+    </div>
+{% endblock %}
