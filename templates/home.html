@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
     <h1>Todoリスト</h1>
+    <p class="error_message">{{ error }}</p>
     <div>
         <form method="POST">
             <input type="text" name="title" placeholder="タイトルを入力してください">
-            <input type="submit" value="検索">
+            <input type="submit" name="search_title" value="検索">
+            <input type="text" name="tag" placeholder="タグを入力してください">
+            <input type="submit" name="search_tag" value="検索">
         </form>
         <a href="/create">Todo作成</a>
     </div>
@@ -30,7 +33,7 @@
                     {% if todo.task %}<span class="task_tag">タスク</span> {% endif %}
                 </td>
                 <td><a href="/{{todo.id}}/update" role=button>編集</a></td>
-                <td><a href="/{{todo.id}}/delete" role="buttom">削除</a></td>
+                <td><a href="/{{todo.id}}/delete" role="buttom" onclick="return confirm('本当に削除しますか？')">削除</a></td>
             </tr>
             {% endfor %}
         </table>

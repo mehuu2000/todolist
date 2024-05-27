@@ -111,13 +111,57 @@ def signup():
 @login_required
 def home():
     todos = Todo.query.filter_by(User_link_id=current_user.id).order_by(Todo.day).all()
-    if request.method == 'GET':
-        flag = 0
-        return render_template('home.html', todos=todos, flag=flag)
-    else:
+    flag = 0
+    if request.method == 'POST':
         title = request.form.get('title')
-        todos = Todo.query.filter_by(do=title).all()
-        flag = 1
+        tag = request.form.get('tag')
+        if not title and not tag:
+            error="検索する対象を記入して下さい"
+            return render_template('home.html', todos=todos, flag=flag, error=error)
+        elif title and tag:
+            error="検索対象は一つにして下さい"
+            return render_template('home.html', todos=todos, flag=flag, error=error)
+        
+        if 'search_title' in request.form:
+            if title:
+                todos = Todo.query.filter_by(User_link_id=current_user.id).filter(Todo.do.contains(title)).order_by(Todo.day).all()
+                flag=1
+                
+                if not todos:
+                    todos = Todo.query.filter_by(User_link_id=current_user.id).order_by(Todo.day).all()
+                    error = "見つかりませんでした"
+                    flag=0
+                    
+                return render_template('home.html', todos=todos, flag=flag, error=error)
+        
+        elif 'search_tag' in request.form:
+            if tag:
+                flag = 1
+                error = ""
+                if tag == '重要':
+                    todos = Todo.query.filter_by(User_link_id=current_user.id, important=True).order_by(Todo.day).all()
+                elif tag == '大学':
+                    todos = Todo.query.filter_by(User_link_id=current_user.id, uni=True).order_by(Todo.day).all()
+                elif tag == 'プライベート':
+                    todos = Todo.query.filter_by(User_link_id=current_user.id, private=True).order_by(Todo.day).all()
+                elif tag == 'タスク':
+                    todos = Todo.query.filter_by(User_link_id=current_user.id, task=True).order_by(Todo.day).all()
+                else:
+                    error = "見つかりませんでした"
+                    flga = 0
+                
+                if not todos:
+                    error = "見つかりませんでした"
+                    flag=0
+                    
+                return render_template('home.html', todos=todos, flag=flag, error=error)
+            
+        else:
+            error = "見つかりませんでした"
+            return render_template('home.html', todos=todos, flag=flag, error=error)
+                
+    
+    else:
         return render_template('home.html', todos=todos, flag=flag)
     
 @app.route('/create', methods=['GET', 'POST'])
