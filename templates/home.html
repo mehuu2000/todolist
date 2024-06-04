@@ -1,48 +1,63 @@
 {% extends "base.html" %}
 {% block content %}
+
     <h1>Todoリスト</h1>
     <p class="error_message">{{ error }}</p>
+
+    <form action="/search" method="POST">
+        <label for="search_content">タイトル・内容・期間</label>
+        <input type="text" id="search_content" name="search_content">
+        <input type="date" id="search_content" name="search_day1">
+        <span>〜</span>
+        <input type="date" id="search_content" name="search_day2">
+        
+        <input type="submit" value="検索">
+    </form>
+
+    <form action="/search_tag" method="POST">
+        <label for="search_tag">タグ</label>
+        <input type="text" id="search_tag" name="search_tag">
+
+        <input type="submit" value="検索">
+    </form>
+
     <div>
-        <form method="POST">
-            <input type="text" name="title" placeholder="タイトルを入力してください">
-            <input type="submit" name="search_title" value="検索">
-            <input type="text" name="tag" placeholder="タグを入力してください">
-            <input type="submit" name="search_tag" value="検索">
-        </form>
         <a href="/create">Todo作成</a>
+    </div>
     </div>
     <div>
         <table border="1">
             <tr>
                 <th>タイトル</th>
-                <th>内容</th>
                 <th>日付</th>
                 <th>タグ</th>
                 <th>編集</th>
                 <th>削除</th>
             </tr>
-            {% for todo in todos %}
+            {% for todo, tags in todos_with_tags %}
             <tr>
-                <td>{{ todo.do }}</td>
-                <td>{{ todo.memo }}</td>
-                <td>{{ todo.day }}</td>
-                <td>
-                    {% if todo.important %}<span class="important_tag">重要</span> {% endif %}
-                    {% if todo.uni %}<span class="uni_tag">大学</span> {% endif %}
-                    {% if todo.private %}<span class="private_tag">プライベート</span> {% endif %}
-                    {% if todo.task %}<span class="task_tag">タスク</span> {% endif %}
+                <td class="a_line"><a href="/{{ todo.id }}" role="button">{{ todo.do }}</a></td>
+                <td class="b_line">{{ todo.day | datetime_format_full }}</td>
+                <td class="b_line">
+                    {% for tag in tags %}
+                        <span class="{{ tag.tag_color }}">{{ tag.tag_name }}</span>
+                    {% endfor %}
                 </td>
-                <td><a href="/{{todo.id}}/update" role=button>編集</a></td>
-                <td><a href="/{{todo.id}}/delete" role="buttom" onclick="return confirm('本当に削除しますか？')">削除</a></td>
+                <td class="a_line"><a href="/{{todo.id}}/update" role=button>編集</a></td>
+                <td class="a_line"><a href="/{{todo.id}}/delete" role="buttom" onclick="return confirm('本当に削除しますか？')">削除</a></td>
             </tr>
             {% endfor %}
         </table>
     </div>
-    {% if flag==1 %}
-        <div>
-            <a href="/home" role="button">全てのTodoを再表示</a>
-        </div>
-    {% endif %}
+    <div>
+        {% if flag==True %}
+            <a href="/home" role="button">全て表示する</a>
+        {% endif %}
+    </div>
+    <div>
+        <a href="/home_index" role="button">一週間分のTodoを表示する</a>
+    </div>
+    
     <div>
         <a href="/logout" role="button">トップページへ</a>
     </div>
