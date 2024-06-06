@@ -8,6 +8,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 app=Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -169,69 +170,18 @@ def home():
 @app.route('/home_index', methods=['GET', 'POST'])
 @login_required
 def home_index():
-    todos = Todo.query.filter_by(User_link_id=current_user.id).order_by(Todo.day).all()
-    memos = Memo.query.filter_by(User_link_id=current_user.id).all()
-    
-    set_todos = set()
-    buf_todos = []
-    
-    s_todo = request.form.get('search_content')
-    
-    s_day1 = datetime.now().date()
+    s_day1 = datetime.now()
     s_day2 = s_day1 + timedelta(days=7)
     
-    # 時間部分をセット
-    s_day1 = datetime.combine(s_day1, datetime.min.time()).replace(second=0)
-    s_day2 = datetime.combine(s_day2, datetime.min.time()).replace(second=0)
-    '''
-    print(s_todo, s_day1, s_day2)    #デバック
-    
-    #入力された二つの日付を比べて予定していない動きを予防
-    if s_day1 and s_day2:
-        if s_day1 > s_day2:
-            s_day1, s_day2 = swap_dates(s_day1, s_day2)
-        elif s_day1 == s_day2:
-            s_day2 = None
-    if not s_day1 and s_day2:
-        s_day1 = s_day2
-        s_day2 = None
-    '''
-    
-    if s_todo:
-        buf_todos = [todo for todo in todos if s_todo in todo.do]
-        for memo in memos:
-                if s_todo in memo.content:
-                    add_todo = Todo.query.filter_by(id=memo.Todo_link_id).first()
-                    if add_todo:
-                        buf_todos.append(add_todo)
-        if s_day1 and not s_day2:
-            for todo in buf_todos:
-                if todo.day.date() == s_day1.date():
-                    set_todos.add(todo)
-        elif s_day1 and s_day2:
-            for todo in buf_todos:
-                if s_day1.date() <= todo.day.date() <= s_day2.date():
-                    set_todos.add(todo)
-        elif not s_day1 and not s_day2:
-            for todo in buf_todos:
-                set_todos.add(todo)
-    
-    else:
-        if s_day1 and not s_day2:
-            for todo in todos:
-                if todo.day.date() == s_day1.date():
-                    set_todos.add(todo)
-        elif s_day1 and s_day2:
-            for todo in todos:
-                if s_day1.date() <= todo.day.date() <= s_day2.date():
-                    set_todos.add(todo)
-    
-                    
-    n_todos = list(set_todos)   
-    n_todos = sorted(n_todos, key=lambda x: x.day)            
+    todos = Todo.query.filter(
+        Todo.User_link_id == current_user.id,
+        Todo.day >= s_day1,
+        Todo.day <= s_day2
+    ).order_by(Todo.day).all()
+        
     todos_with_tags = []
     
-    for todo in n_todos:
+    for todo in todos:
         tags = Tag.query.filter_by(User_link_id=current_user.id, Todo_link_id=todo.id).all()
         todos_with_tags.append((todo, tags))
     
@@ -241,14 +191,6 @@ def home_index():
 @app.route('/search', methods=['POST'])
 @login_required
 def search():
-    todos = Todo.query.filter_by(User_link_id=current_user.id).order_by(Todo.day).all()
-    memos = Memo.query.filter_by(User_link_id=current_user.id).all()
-    
-    set_todos = set()
-    buf_todos = []
-    
-    s_todo = request.form.get('search_content')
-    
     s_day1 = request.form.get('search_day1')
     if s_day1:
         s_day1 = datetime.strptime(s_day1, '%Y-%m-%d').date()
@@ -259,50 +201,46 @@ def search():
         s_day2 = datetime.strptime(s_day2, '%Y-%m-%d').date()
         s_day2 = datetime.combine(s_day2, datetime.min.time()).replace(second=0)
     
-    print(s_todo, s_day1, s_day2)    #デバック
-    
     #入力された二つの日付を比べて予定していない動きを予防
     if s_day1 and s_day2:
         if s_day1 > s_day2:
             s_day1, s_day2 = swap_dates(s_day1, s_day2)
-        elif s_day1 == s_day2:
-            s_day2 = None
-    if not s_day1 and s_day2:
+    elif not s_day1 and s_day2:
         s_day1 = s_day2
-        s_day2 = None
+    elif s_day1 and s_day2:
+        s_day2 = s_day1
+    elif not s_day1 and not s_day2:
+        today = datetime.now().date()
+        s_day1 = today - relativedelta(months=3)
+        s_day2 = today + relativedelta(months=3)
+        
+    todos = Todo.query.filter(
+        Todo.User_link_id == current_user.id,
+        Todo.day >= s_day1,
+        Todo.day <= s_day2
+    ).order_by(Todo.day).all()
+    memos = Memo.query.filter_by(User_link_id=current_user.id).all()
     
+    s_todo = request.form.get('search_content')
     if s_todo:
-        buf_todos = [todo for todo in todos if s_todo in todo.do]
+        set_todos = set()
+        #buf_todos = []
+        
+        set_todos = [todo for todo in todos if s_todo in todo.do]
         for memo in memos:
                 if s_todo in memo.content:
                     add_todo = Todo.query.filter_by(id=memo.Todo_link_id).first()
                     if add_todo:
-                        buf_todos.append(add_todo)
-        if s_day1 and not s_day2:
-            for todo in buf_todos:
-                if todo.day.date() == s_day1.date():
-                    set_todos.add(todo)
-        elif s_day1 and s_day2:
-            for todo in buf_todos:
-                if s_day1.date() <= todo.day.date() <= s_day2.date():
-                    set_todos.add(todo)
-        elif not s_day1 and not s_day2:
-            for todo in buf_todos:
-                set_todos.add(todo)
+                        set_todos.append(add_todo)
+        
+        n_todos = list(set_todos)
+        n_todos = sorted(n_todos, key=lambda x: x.day)  
     else:
-        if s_day1 and not s_day2:
-            for todo in todos:
-                if todo.day.date() == s_day1.date():
-                    set_todos.add(todo)
-        elif s_day1 and s_day2:
-            for todo in todos:
-                if s_day1.date() <= todo.day.date() <= s_day2.date():
-                    set_todos.add(todo)
+        if s_day1 and  s_day2:
+            n_todos = todos
                     
-    n_todos = list(set_todos)   
-    n_todos = sorted(n_todos, key=lambda x: x.day)            
-    todos_with_tags = []
     
+    todos_with_tags = []
     for todo in n_todos:
         tags = Tag.query.filter_by(User_link_id=current_user.id, Todo_link_id=todo.id).all()
         todos_with_tags.append((todo, tags))
@@ -363,7 +301,7 @@ def create():
     if request.method == 'POST':
         do = request.form.get('title')
         day = request.form.get('day')
-        time = request.form.get('time')
+        time = request.form.get('day_time')
         
         if not do or not day:
             error = "記入していない項目があります"
