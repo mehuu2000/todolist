@@ -5,7 +5,7 @@
     <p class="error_message">{{ error }}</p>
 
     <form action="/search" method="POST">
-        <label for="search_content">タイトル・内容・期間</label>
+        <label for="search_content">タイトル・内容・期間検索(期間を選択しない場合は前後三ヶ月分が表示されます)</label><br>
         <input type="text" id="search_content" name="search_content">
         <input type="date" id="search_content" name="search_day1">
         <span>〜</span>
@@ -14,8 +14,10 @@
         <input type="submit" value="検索">
     </form>
 
+    <br>
+
     <form action="/search_tag" method="POST">
-        <label for="search_tag">タグ</label>
+        <label for="search_tag">タグ検索</label><br>
         <input type="text" id="search_tag" name="search_tag">
 
         <input type="submit" value="検索">
