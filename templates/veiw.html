@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>タイトル：{{ todo.do }}</h1>
+    <p><日付><br>
+        西暦：{{ todo.day | datetime_format_Y }}<br>
+        {{ todo.day | datetime_format_m }}月{{ todo.day | datetime_format_d }}日{{ todo.day | datetime_format_H }}:{{ todo.day | datetime_format_M }}
+    </p>
+    <p>
+        <p><タグ>
+            {% for tag in tags %}
+                <span class="{{ tag.tag_color }}">{{ tag.tag_name }}</span>
+            {% endfor %}
+        </p>
+    </p>
+    <form method="POST">
+        <p><メモ><br>
+            {% for memo in memos %}
+                <input type="checkbox" id="memo_check{{ memo.id }}" name="memo_check{{ memo.id }}" value="{{ memo.content }}" onclick="fin_todo(this)" {% if memo.check_memo %} checked {% endif %}>
+                <label class="b_line {% if memo.check_memo %} strikethrough {% endif %}" for="memo_check{{ memo.id }}">{{ memo.content }}</label><br>
+            {% endfor %}
+
+            <button type="submit">保存</button>
+        </p>
+    </form>
+
+    <div>
+        <a href="/home" role="button">戻る</a>
+        <a href="/logout" role="button">トップページへ</a>
+    </div>
+
+    <style>
+        .b_line.strikethrough {
+            text-decoration: line-through;
+        }
+    </style>
+
+    <script>
+        function fin_todo(checkbox) {
+            var label = document.querySelector('label[for="' + checkbox.id + '"]');
+            if (checkbox.checked) {
+                label.classList.add('strikethrough');
+            } else {
+                label.classList.remove('strikethrough');
+            }
+        }
+    </script>
+{% endblock %}
+

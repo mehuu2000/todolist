@@ -2,41 +2,51 @@
 {% block content %}
     <h1>Todo作成</h1>
     <p class="error_message">{{ error }}</p>
-    <form method="POST">
+    <form id="combinedForm" method="POST">
         <div>
             <div>
-                <label for="">やること</label>
-                <input type="text" name="do">
+                <label for="title">タイトル</label>
+                <input type="text" id="title" name="title" value="{{ do }}">
             </div>
             <div>
-                <label for="">メモ</label>
-                <input type="text" name="memo">
+                <label for="day">日付</label>
+                <input type="date" id="day" name="day">
+                <label for="day_time">時間</label>
+                <input type="time" id="day_time" name="day_time">
             </div>
+        </div>
+
+        <div id="memoContainer">
             <div>
-                <label for="">日付</label>
-                <input type="date" name="day">
+                <label for="memo1">メモ</label>
+                <input type="text" id="memo1" name="memo1">
             </div>
         </div>
-        <div>
-            <label for="important">重要:</label>
-            <input type="checkbox" name="important" id="important">
-        
-            <label for="uni">大学:</label>
-            <input type="checkbox" name="uni" id="uni">
-        
-            <label for="private">プライベート:</label>
-            <input type="checkbox" name="private" id="private">
-        
-            <label for="task">タスク:</label>
-            <input type="checkbox" name="task" id="task">
+        <button type="button" onclick="addMemo()">メモを追加</button><br>
+
+        <div id="tagContainer">
+            <div>
+                <label for="tag_name1">タグ</label>
+                <input type="text" id="tag_name1" name="tag_name1">
+                <label for="tag_color1">色</label>
+                <select id="tag_color1" name="tag_color1">
+                    <option value="黒">黒</option>
+                    <option value="赤">赤</option>
+                    <option value="緑">緑</option>
+                    <option value="黄">黄</option>
+                    <option value="青">青</option>
+                </select>
+            </div>
         </div>
-        </div>
-        <div>
-            <input type="submit" value="作成">
-        </div>
+        <button type="button" onclick="addTag()">タグを追加</button><br>
+        
+        <input type="submit" value="Submit">
     </form>
+
     <div>
         <a href="/home" role="button">戻る</a>
         <a href="/logout" role="button">トップページへ</a>
     </div>
+
+    <script src="{{ url_for('static', filename='js/addTag.js') }}"></script>
 {% endblock %}
