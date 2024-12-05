@@ -12,27 +12,37 @@ th, td{
     color: red;
 }
 
-.important_tag{
+.black {
+    color: black;
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid black;
+}
+.red {
     color: red;
     padding: 2px 4px;
     border-radius: 5px;
     border: 1px solid red;
 }
-.uni_tag{
+.green {
     color: green;
     padding: 2px 4px;
     border-radius: 5px;
     border: 1px solid green;
 }
-.private_tag{
+.yellow {
+    color: rgb(255, 200, 0);
+    padding: 2px 4px;
+    border-radius: 5px;
+    border: 1px solid rgb(255, 200, 0);
+}
+.blue {
     color: blue;
     padding: 2px 4px;
     border-radius: 5px;
     border: 1px solid blue;
 }
-.task_tag{
-    color: rgb(255, 200, 0);
-    padding: 2px 4px;
-    border-radius: 5px;
-    border: 1px solid rgb(255, 200, 0);
+
+.disabled {
+    text-decoration: line-through;
 }

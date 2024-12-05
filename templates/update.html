@@ -1,41 +1,57 @@
 {% extends "base.html" %}
 {% block content %}
-    <h1>Todo編集</h1>
+    <h1>Todoの更新</h1>
     <p class="error_message">{{ error }}</p>
-    <form method="POST">
+    <form id="combinedForm" method="POST">
         <div>
             <div>
-                <label for="">やること</label>
-                <input type="text" name="do" value="{{ todo.do }}">
+                <label for="title">タイトル</label>
+                <input type="text" id="title" name="title" value="{{ todo.do }}">
             </div>
             <div>
-                <label for="">メモ</label>
-                <input type="text" name="memo" value="{{ todo.memo }}">
-            </div>
-            <div>
-                <label for="">日付</label>
-                <input type="date" name="day" value="{{ todo.day }}">
+                <label for="day">日付</label>
+                <input type="date" id="day" name="day" value="{{ todo.day | datetime_format_Y }}-{{ todo.day | datetime_format_m }}-{{ todo.day | datetime_format_d }}">
+                <label for="day_time">時間</label>
+                <input type="time" id="day_time" name="day_time" value="{{ todo.day | datetime_format_H }}:{{ todo.day | datetime_format_M }}">
             </div>
         </div>
-        <div>
-            <label for="important">重要:</label>
-            <input type="checkbox" name="important" id="important" {% if todo.important %}checked{% endif %}>
-        
-            <label for="uni">大学:</label>
-            <input type="checkbox" name="uni" id="uni" {% if todo.uni %}checked{% endif %}>
-        
-            <label for="private">プライベート:</label>
-            <input type="checkbox" name="private" id="private" {% if todo.private %}checked{% endif %}>
-        
-            <label for="task">タスク:</label>
-            <input type="checkbox" name="task" id="task" {% if todo.task %}checked{% endif %}>
+
+        <!-- タグのフォーム -->
+        <div id="tagContainer">
+            {% for tag in tags %}
+                <div>
+                    <label for="tag_name{{ tag.id }}">タグ</label>
+                    <input type="text" id="tag_name{{ tag.id }}" name="tag_name{{ tag.id }}" value="{{ tag.tag_name }}">
+                    <label for="tag_color{{ tag.id }}">色</label>
+                    <select id="tag_color{{ tag.id }}" name="tag_color{{ tag.id }}">
+                        <option value="黒" {% if tag.tag_color == '黒' %} selected {% endif %}>黒</option>
+                        <option value="赤" {% if tag.tag_color == '赤' %} selected {% endif %}>赤</option>
+                        <option value="緑" {% if tag.tag_color == '緑' %} selected {% endif %}>緑</option>
+                        <option value="黄" {% if tag.tag_color == '黄' %} selected {% endif %}>黄</option>
+                        <option value="青" {% if tag.tag_color == '青' %} selected {% endif %}>青</option>
+                    </select>
+                </div>
+            {% endfor %}
         </div>
-        <div>
-            <input type="submit" value="更新">
+        <button type="button" onclick="addTag()">タグを追加</button><br>
+
+        <!-- メモのフォーム -->
+        <div id="memoContainer">
+            {% for memo in memos %}
+                <div>
+                    <label for="memo{{ memo.id }}">メモ</label>
+                    <input type="text" id="memo{{ memo.id }}" name="memo{{ memo.id }}" value="{{ memo.content }}">
+                </div>
+            {% endfor %}
         </div>
+        <button type="button" onclick="addMemo()">メモを追加</button><br>
+        
+        <input type="submit" value="Submit">
     </form>
     <div>
         <a href="/home" role="button">戻る</a>
         <a href="/logout" role="button">トップページへ</a>
     </div>
+
+    <script src="{{ url_for('static', filename='js/update.js') }}"></script>
 {% endblock %}
